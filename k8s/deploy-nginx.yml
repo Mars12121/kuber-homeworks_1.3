@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netology-deployment-ng
+  labels:
+    app: main-ng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main-ng
+  template:
+    metadata:
+      labels:
+        app: main-ng
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+      initContainers:
+      - name: busybox
+        image: busybox:1.28
+        command: ['sh', '-c', "until nslookup nginx-svc-ng.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for nginx-svc-ng; sleep 2; done"]
